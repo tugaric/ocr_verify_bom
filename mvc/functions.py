@@ -1,44 +1,27 @@
-import cv2
-import numpy as np
-from pytesseract import Output, pytesseract
-from model import My_model, from_json_file
-from view import view
 from PIL import ImageGrab, ImageTk, Image
-from functions import grab_screen_shot
 
-class controller:
-    def __init__(self):
-        self.model = My_model()
-        self.view = view()
+# return screenshot
+def grab_screen_shot():
+        try:
+            # Get the screenshot from the clipboard
+            image = ImageGrab.grabclipboard()
+            # if image = NONE ( no value ) then if statement doesn't get executed
+            if image:
+                return image
+            else:
+                print("No screenshot available")
+        except Exception as e:
+            print(e)
 
-    def setup(self):
-        self.view.root.bind('<Control-v>', self.display_image)
-        self.view.btn_check.bind('<Button-1>', self.check_bom)
-        self.view.run()
-
-    def display_image(self, event=None):
-        # get screenshot
-        image = grab_screen_shot()
-
-        # convert to a tkinter image
-        photo_image = ImageTk.PhotoImage(image)
-
-        # Update the self.view.label with the new image
-        self.view.set_image(photo_image)
-
-    def check_bom(self, event=None):
+def check_bom(self, components, image_path): #image_path = "image.jpg"
     # font
         font = cv2.FONT_HERSHEY_SIMPLEX
         fontScale = 0.5
         color = (255, 0, 0)
         thickness = 1
 
-    # get the valve data
-        valves = from_json_file("valves.json")
-        components = valves[0]["C040"]
-
-        # Load the image
-        img = cv2.imread('image.jpg')
+    # Load the image
+        img = cv2.imread(image_path)
 
         # Convert the image to grayscale
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -66,7 +49,3 @@ class controller:
         cv2.imshow('Result', img)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
-
-if __name__ == "__main__":
-    app = controller()
-    app.setup()

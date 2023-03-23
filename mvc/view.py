@@ -16,9 +16,10 @@ class view:
         self.btn_check = tk.Button(self.root, text= "Check bom", activebackground="blue", activeforeground="white")
         self.btn_check.grid(column=1, row=0)
 
-        # Bind the "ctrl+v" keyboard shortcut to the display_image function
-        # self.root.bind('<Control-v>', display_image)
-
     def run(self):
         # Start the main loop
         self.root.mainloop()
+
+    def set_image(self, image):
+        self.label.configure(image = image)
+        self.label.image = image
