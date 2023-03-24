@@ -7,7 +7,7 @@ class view:
         # Create the Tkinter window
         self.root = tk.Tk()
         self.root.title('Screenshot Viewer')
-        self.root.geometry("400x300")
+        self.root.minsize(400,300)
 
         # Create the label to display the image
         self.label = tk.Label(self.root)

@@ -1,10 +1,7 @@
-import cv2
-import numpy as np
-from pytesseract import Output, pytesseract
-from model import My_model, from_json_file
-from view import view
+from mvc.model import My_model, from_json_file
+from mvc.view import view
+from mvc.functions import grab_screen_shot, check_bom
 from PIL import ImageGrab, ImageTk, Image
-from functions import grab_screen_shot
 
 class controller:
     def __init__(self):
@@ -19,12 +16,12 @@ class controller:
     def display_image(self, event=None):
         # get screenshot
         image = grab_screen_shot()
-
+        image.save("screenshot.png", format="PNG")
         # convert to a tkinter image
         photo_image = ImageTk.PhotoImage(image)
-
         # Update the self.view.label with the new image
         self.view.set_image(photo_image)
+        self.view.root.update()
 
     def check_bom(self, event=None):
     # font
@@ -36,36 +33,10 @@ class controller:
     # get the valve data
         valves = from_json_file("valves.json")
         components = valves[0]["C040"]
-
-        # Load the image
-        img = cv2.imread('image.jpg')
-
-        # Convert the image to grayscale
-        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-
-        # Threshold the image
-        thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)[1]
-
-        # Remove noise
-        thresh = cv2.medianBlur(thresh, 3)
-
-        # Perform OCR on the image
-        ocr_data = pytesseract.image_to_data(thresh, output_type=Output.DICT)
-        for index, text in enumerate(ocr_data["text"]):
-            #if text in components.keys():
-            for key in components.keys():
-                if key in text:
-                    x1 = int(ocr_data["left"][index])
-                    y1 = int(ocr_data["top"][index])
-                    x2 = x1 + int(ocr_data["width"][index])
-                    y2 = y1 + int(ocr_data["height"][index])
-                    cv2.putText(img, components[key], (x1,y1-5), font, fontScale, color, thickness)
-                    cv2.rectangle(img, (x1-2, y1-2), (x2+2, y2+2), (0, 255, 0), 1)
-
-        # Display the result
-        cv2.imshow('Result', img)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
+        path = "screenshot.png"
+        result = check_bom(components, path)
+        result = Image.fromarray(result)
+        result.save("result.png")
 
 if __name__ == "__main__":
     app = controller()
