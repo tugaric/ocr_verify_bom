@@ -1,7 +1,8 @@
 from mvc.model import My_model, from_json_file
 from mvc.view import view
-from mvc.functions import grab_screen_shot, check_bom
+from mvc.functions import grab_screen_shot, check_bom, get_keys_as_list
 from PIL import ImageGrab, ImageTk, Image
+import cv2
 
 class controller:
     def __init__(self):
@@ -9,11 +10,23 @@ class controller:
         self.view = view()
 
     def setup(self):
-        self.view.root.bind('<Control-v>', self.display_image)
+        valves = from_json_file("valves.json")
+        keys = get_keys_as_list(valves)
+        
+        # set initial image
+        image = Image.open("init.png")
+        tk_img = ImageTk.PhotoImage(image)
+        self.view.set_image(tk_img)
+
+        # set the series to the combobox as options
+        self.view.set_combobox_values(keys)
+
+        # bind functions to the interactive widgets
+        self.view.root.bind('<Control-v>', self.display_screenshot)
         self.view.btn_check.bind('<Button-1>', self.check_bom)
         self.view.run()
 
-    def display_image(self, event=None):
+    def display_screenshot(self, event=None):
         # get screenshot
         image = grab_screen_shot()
         image.save("screenshot.png", format="PNG")
@@ -24,20 +37,11 @@ class controller:
         self.view.root.update()
 
     def check_bom(self, event=None):
-    # font
-        font = cv2.FONT_HERSHEY_SIMPLEX
-        fontScale = 0.5
-        color = (255, 0, 0)
-        thickness = 1
-
-    # get the valve data
+        # get the valve data
         valves = from_json_file("valves.json")
+        keys = get_keys_as_list(valves)
         components = valves[0]["C040"]
         path = "screenshot.png"
         result = check_bom(components, path)
         result = Image.fromarray(result)
         result.save("result.png")
-
-if __name__ == "__main__":
-    app = controller()
-    app.setup()

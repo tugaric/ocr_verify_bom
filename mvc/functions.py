@@ -3,6 +3,18 @@ import cv2
 import numpy as np
 from pytesseract import Output, pytesseract
 
+def get_keys_as_list(list_of_dictionaires):
+    # create an empty set to store the keys in
+    keys_set = set()
+    # for every dictionary inside the list of dictionaires
+    for dictionary in list_of_dictionaires:
+        # update method is used to "add" object to set
+        # dictionary. keys() returns the key of the dictionary
+        keys_set.update(dictionary.keys())
+    # convert the set into a list
+    keys_list = list(keys_set)
+    return keys_list
+
 # return screenshot
 def grab_screen_shot():
         try:
@@ -43,8 +55,9 @@ def check_bom(components, image_path): #image_path = "image.jpg"
                     y2 = y1 + int(ocr_data["height"][index])
                     cv2.putText(img, components[key], (x1,y1-5), font, fontScale, color, thickness)
                     cv2.rectangle(img, (x1-2, y1-2), (x2+2, y2+2), (0, 255, 0), 1)
+         # Display the result
+        cv2.imshow('Result', img)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
         return img
-        # Display the result
-        #cv2.imshow('Result', img)
-        #cv2.waitKey(0)
-        #cv2.destroyAllWindows()
+       
