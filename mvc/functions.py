@@ -4,16 +4,10 @@ import numpy as np
 from pytesseract import Output, pytesseract
 
 def get_keys_as_list(list_of_dictionaires):
-    # create an empty set to store the keys in
-    keys_set = set()
-    # for every dictionary inside the list of dictionaires
-    for dictionary in list_of_dictionaires:
-        # update method is used to "add" object to set
-        # dictionary. keys() returns the key of the dictionary
-        keys_set.update(dictionary.keys())
-    # convert the set into a list
-    keys_list = list(keys_set)
-    return keys_list
+    result = []
+    for key in list_of_dictionaires.keys():
+        result.append(key)
+    return result
 
 # return screenshot
 def grab_screen_shot():

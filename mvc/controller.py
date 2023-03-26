@@ -40,7 +40,7 @@ class controller:
         # get the valve data
         valves = from_json_file("valves.json")
         keys = get_keys_as_list(valves)
-        components = valves[0]["C040"]
+        components = valves[self.view.cbo_valve_serie.get()]
         path = "screenshot.png"
         result = check_bom(components, path)
         result = Image.fromarray(result)
