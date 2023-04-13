@@ -14,7 +14,7 @@ class controller:
         keys = get_keys_as_list(valves)
         
         # set initial image
-        image = Image.open("init.png")
+        image = Image.open(r"images/init.png")
         tk_img = ImageTk.PhotoImage(image)
         self.view.set_image(tk_img)
 
@@ -29,19 +29,24 @@ class controller:
     def display_screenshot(self, event=None):
         # get screenshot
         image = grab_screen_shot()
-        image.save("screenshot.png", format="PNG")
+        image.save(r"images/screenshot.png", format="PNG")
         # convert to a tkinter image
         photo_image = ImageTk.PhotoImage(image)
         # Update the self.view.label with the new image
         self.view.set_image(photo_image)
         self.view.root.update()
 
-    def check_bom(self, event=None):
-        # get the valve data
+    def check_bom(self, event):
+        # location where the analyzed data get stored
+        img_save_location_path = r"images/result.png"
+        # location that contains the image of the bom to verify
+        bom_location_path = r"images\screenshot.png"
+        
+        # get the valve json data
         valves = from_json_file("valves.json")
         keys = get_keys_as_list(valves)
         components = valves[self.view.cbo_valve_serie.get()]
-        path = "screenshot.png"
-        result = check_bom(components, path)
+        
+        result = check_bom(components, bom_location_path)
         result = Image.fromarray(result)
-        result.save("result.png")
+        result.save(img_save_location_path)
