@@ -30,12 +30,12 @@ class view:
         self.root.mainloop()
 
     def set_combobox_values(self, options):
-    # Remove any existing options from the dropdown
+        # Remove any existing options from the dropdown
         self.cbo_valve_serie['values'] = options
 
         # Set the default value to the first option in the list
         self.cbo_valve_serie.current(0)
 
-    def set_image(self, image: ImageTk) -> None:
-        self.label.configure(image = image)
-        self.label.image = image
+    def set_image(self, image_tk: ImageTk) -> None:
+        self.label.configure(image = image_tk)
+        self.label.image = image_tk
