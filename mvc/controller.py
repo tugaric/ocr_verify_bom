@@ -1,8 +1,7 @@
 from mvc.model import My_model, from_json_file
-from mvc.view import view
+from mvc.view import view, ScreenshotTaker
 from mvc.functions import show_image, grab_screen_shot, get_keys_as_list, image_to_text_position, filter_text_points, draw_rects_on_img
 from PIL import ImageGrab, ImageTk, Image
-from mvc.ScreenshotTaker import ScreenshotTaker
 import cv2
 
 class controller:
@@ -27,17 +26,34 @@ class controller:
         self.view.root.bind('<Control-v>', self.display_screenshot)
         self.view.btn_check.bind('<Button-1>', self.btn_check_bom_pressed)
         self.view.btn_take_screenshot.bind('<Button-1>', self.btn_take_screenshot_pressed)
+        self.view.screenshot_window.btn_take_a_screenshot.bind('<Button-1>', self.secondary_window_screenshot_btn_pressed)
         self.view.run()
 
-    """User wants screenshot"""
+    def secondary_window_screenshot_btn_pressed(self, event):
+        """ Button in screenshotTaker widget got pressed """
+        """ Hide the secondary window so we can take the screenshot @ the wished position """
+        toplevel_window = self.view.screenshot_window
+        toplevel_window.hide_window()
+        x, y = toplevel_window.winfo_x(), toplevel_window.winfo_y()
+        w, h = toplevel_window.winfo_width(), toplevel_window.winfo_height()
+        
+        # Take a screenshot of the desktop
+        img = ImageGrab.grab(bbox=(x, y, x + w, y + h))
+
+        # save to the screenshot object
+        toplevel_window.save_screenshot(img)
+        screenshot = toplevel_window.get_screenshot()
+        screenshot.save("images/screenshot.png")
+        tk_image = ImageTk.PhotoImage(screenshot)
+        self.view.set_image(tk_image)
+
+    """ Open screenshot secondary window """
     def btn_take_screenshot_pressed(self, event):
-        # create ScreenshotTaker 
-        screenshot_taker = ScreenshotTaker("800x600")
-        screenshot_taker.run()
-        # retrieve image
-        screenshot_taker = screenshot_taker.get_screenshot()
-        # Save to screenshot.png for further treatement
-        screenshot_taker.save("images/screenshot.png")
+        """ create the screenshot_taker instance """
+        if self.view.screenshot_window not in self.view.root.winfo_children():
+            self.view.screenshot_window = ScreenshotTaker("800x600")
+        """ retrieve image """
+        self.view.screenshot_window.show_window()
 
     def display_screenshot(self, event=None):
         # get screenshot
