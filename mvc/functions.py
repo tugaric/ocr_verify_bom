@@ -1,14 +1,21 @@
 # standard libraries
 import cv2
 import numpy as np
-from typing import List
+from typing import List, Dict
 from PIL import ImageGrab, ImageTk, Image
 from pytesseract import Output, pytesseract
 from mvc.custom_dataclass import TextPosition
 
-def filter_text_points(list_of_words: List[str], list_of_text_and_position: List[TextPosition]) -> List[TextPosition]:
-    text_positions = {text_and_position.text: text_and_position for text_and_position in list_of_text_and_position}
-    func_result = [text_positions[word] for word in list_of_words if word in text_positions]
+def filter_text_points(dict_of_words: Dict[str, str], list_of_text_and_position: List[TextPosition]) -> List[TextPosition]:
+    word_positions = {text_and_position.text: text_and_position for text_and_position in list_of_text_and_position}
+    func_result = []
+
+    for key, word in dict_of_words.items():
+        if key in word_positions:
+            text_position = word_positions[key]
+            text_position.text = word
+            func_result.append(text_position)
+
     return func_result
 
 def image_to_text_position(img):
@@ -26,12 +33,6 @@ def image_to_text_position(img):
             new_text_position_point = TextPosition(text, x1, y1, x2, y2)
             res_list.append(new_text_position_point)
     return res_list
-
-def get_keys_as_list(list_of_dictionaires):
-    result = []
-    for key in list_of_dictionaires.keys():
-        result.append(key)
-    return result
 
 def grab_screen_shot():
         try:
